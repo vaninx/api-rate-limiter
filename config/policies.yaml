@@ -1,1 +1,39 @@
+policies:
+- name: default_api_key
+scope: identity
+target: all_api_keys
+limit: 100
+window: 1m
+burst: 20
+action: block
 
+- name: login_protection
+scope: route
+target: /login
+limit: 5
+window: 10s
+action: block
+identity: ip # enforce per IP for login
+
+- name: writes_protection
+scope: route
+target: /payments
+limit: 30
+window: 1m
+burst: 10
+action: block
+identity: user # enforce per user for writes
+
+- name: global_safety_cap
+scope: global
+target: all_routes
+limit: 10000
+window: 1m
+action: block
+
+- name: daily_quota
+scope: identity
+target: all_api_keys
+limit: 10000
+window: 1d
+action: block
